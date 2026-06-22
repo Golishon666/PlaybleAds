@@ -24,6 +24,7 @@ namespace PlayableAdsShort
         public VfxBurstView groundBurstPrefab;
         public VfxBurstView waterBurstPrefab;
         public VfxBurstView octopusDeathBurstPrefab;
+        public GameObject weaponProjectilePrefab;
         public CtaOverlayView ctaOverlayPrefab;
 
         [Header("Audio")]

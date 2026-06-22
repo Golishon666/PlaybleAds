@@ -129,6 +129,7 @@ Transform:
   - {fileID: 7581667365014068834}
   - {fileID: 3008623974156603416}
   - {fileID: 925505134824117294}
+  - {fileID: 1111111111111111112}
   - {fileID: 286798906908247058}
   - {fileID: 8455146498902291362}
   - {fileID: 8232833625516919554}
@@ -147,7 +148,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d61390164630a5f4fae0ca2d239a4985, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayableAdsShort.WorldNavigation
   nodes:
   - {fileID: 208585991053480979}
@@ -156,6 +157,7 @@ MonoBehaviour:
   - {fileID: 5274632867546836405}
   - {fileID: 5041768266208650365}
   - {fileID: 4536452828721574856}
+  - {fileID: 1111111111111111113}
   - {fileID: 7729072352516606818}
   - {fileID: 6207779589479134615}
   - {fileID: 4335601737218361862}
@@ -356,6 +358,53 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayableAdsShort.NavigationNode
   neighbours:
   - {fileID: 5041768266208650365}
+  - {fileID: 1111111111111111113}
+--- !u!1 &1111111111111111111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1111111111111111112}
+  - component: {fileID: 1111111111111111113}
+  m_Layer: 0
+  m_Name: Waypoint_05_06
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1111111111111111112
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1111111111111111111}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.48, y: 11.94, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3756929204626628876}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1111111111111111113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1111111111111111111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21d03619b9935464498af3de86c84696, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayableAdsShort.NavigationNode
+  neighbours:
+  - {fileID: 4536452828721574856}
   - {fileID: 7729072352516606818}
 --- !u!1 &4912692930050102297
 GameObject:
@@ -451,7 +500,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayableAdsShort.NavigationNode
   neighbours:
-  - {fileID: 4536452828721574856}
+  - {fileID: 1111111111111111113}
   - {fileID: 6207779589479134615}
 --- !u!1 &5294602345472748637
 GameObject:

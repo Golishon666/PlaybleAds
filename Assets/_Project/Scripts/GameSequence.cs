@@ -41,7 +41,7 @@ namespace PlayableAdsShort
 
             _stage.Play(_config.chestClip, 0.95f);
             chest.Open();
-            await UniTask.Delay((int)(_config.chestImpactDelay * 1000f), cancellationToken: token);
+            await WaitForChestOpenAsync(chest, token);
             PlayBurst(_factory.CreateChestBurstVfx(), chest.Position);
             await AwaitTween(chest.PlayRewardFlight(hero.RewardCatchPosition), token);
             state.OpenChest(chest.Reward);
@@ -76,7 +76,7 @@ namespace PlayableAdsShort
             if (target.Kind == TargetKind.WaterEnemy)
             {
                 await UniTask.Delay((int)(_config.attackImpactDelay * 1000f), cancellationToken: token);
-                weaponThrow = hero.ThrowWeaponAt(target.ImpactPosition);
+                weaponThrow = hero.ThrowWeaponAt(target.ImpactPosition, _config.weaponProjectilePrefab, _stage.effectsLayer);
                 await UniTask.Delay((int)(hero.weaponThrowOutDuration * 1000f), cancellationToken: token);
             }
             else
@@ -268,6 +268,57 @@ namespace PlayableAdsShort
 
             burst.Show(position);
             burst.Play(PlayableConstants.Effects.BurstDuration);
+        }
+
+        private async UniTask WaitForChestOpenAsync(ChestView chest, CancellationToken token)
+        {
+            Animator animator = chest.animator;
+            if (animator == null)
+            {
+                await UniTask.Delay((int)(_config.chestImpactDelay * 1000f), cancellationToken: token);
+                return;
+            }
+
+            await UniTask.Yield(PlayerLoopTiming.Update, token);
+            await WaitUntilAnimatorStateAsync(animator, PlayableConstants.Animation.OpenStateHash, token);
+            await WaitUntilAnimatorStateCompleteAsync(animator, PlayableConstants.Animation.OpenStateHash, token);
+        }
+
+        private static async UniTask WaitUntilAnimatorStateAsync(Animator animator, int stateHash, CancellationToken token)
+        {
+            float elapsed = 0f;
+            while (elapsed < PlayableConstants.Animation.AnimatorWaitTimeout)
+            {
+                token.ThrowIfCancellationRequested();
+                AnimatorStateInfo current = animator.GetCurrentAnimatorStateInfo(PlayableConstants.Animation.DefaultLayer);
+                AnimatorStateInfo next = animator.GetNextAnimatorStateInfo(PlayableConstants.Animation.DefaultLayer);
+                if (current.shortNameHash == stateHash || next.shortNameHash == stateHash)
+                {
+                    return;
+                }
+
+                elapsed += Time.deltaTime;
+                await UniTask.Yield(PlayerLoopTiming.Update, token);
+            }
+        }
+
+        private static async UniTask WaitUntilAnimatorStateCompleteAsync(Animator animator, int stateHash, CancellationToken token)
+        {
+            float elapsed = 0f;
+            while (elapsed < PlayableConstants.Animation.AnimatorWaitTimeout)
+            {
+                token.ThrowIfCancellationRequested();
+                AnimatorStateInfo current = animator.GetCurrentAnimatorStateInfo(PlayableConstants.Animation.DefaultLayer);
+                if (current.shortNameHash == stateHash
+                    && !animator.IsInTransition(PlayableConstants.Animation.DefaultLayer)
+                    && current.normalizedTime >= PlayableConstants.Animation.CompleteNormalizedTime)
+                {
+                    return;
+                }
+
+                elapsed += Time.deltaTime;
+                await UniTask.Yield(PlayerLoopTiming.Update, token);
+            }
         }
 
         private static async UniTask AwaitTween(Tween tween, CancellationToken token)

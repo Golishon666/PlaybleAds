@@ -23,6 +23,7 @@ MonoBehaviour:
   groundBurstPrefab: {fileID: 2592182256280145336, guid: 46183b9480c8ced408ce9feb19847769, type: 3}
   waterBurstPrefab: {fileID: 4161729216873010240, guid: 4489253564958584eb6e231a478d2c4c, type: 3}
   octopusDeathBurstPrefab: {fileID: 7001000000000000003, guid: 7960f796252b48929b528d82fca5669f, type: 3}
+  weaponProjectilePrefab: {fileID: 7101000000000000001, guid: 7927d8d5db5e4f7ba237be6ecc01985e, type: 3}
   ctaOverlayPrefab: {fileID: 5201014329209918098, guid: 691e52f40040bb74dbc280b7e25165ee, type: 3}
   clickClip: {fileID: 8300000, guid: 134e5232937132743a689c5e40184163, type: 3}
   chestClip: {fileID: 8300000, guid: be1bcf28d6991164f813d4ebfa33ad41, type: 3}

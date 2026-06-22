@@ -118,40 +118,49 @@ namespace PlayableAdsShort
             SetTrigger(PlayableConstants.Animation.AttackTriggerHash);
         }
 
-        public Tween ThrowWeaponAt(Vector3 targetPosition)
+        public Tween ThrowWeaponAt(Vector3 targetPosition, GameObject projectilePrefab, Transform projectileParent)
         {
             if (weaponRoot == null || !_weaponEquipped)
             {
                 return null;
             }
 
-            Transform originalParent = weaponRoot.parent;
-            Vector3 originalLocalPosition = weaponRoot.localPosition;
-            Quaternion originalLocalRotation = weaponRoot.localRotation;
+            GameObject projectile = projectilePrefab != null
+                ? Instantiate(projectilePrefab, weaponRoot.position, weaponRoot.rotation, projectileParent)
+                : Instantiate(weaponRoot.gameObject, weaponRoot.position, weaponRoot.rotation);
+            Transform projectileRoot = projectile.transform;
             Vector3 originalLocalScale = weaponRoot.localScale;
-            Vector3 returnPosition = originalParent != null
-                ? originalParent.TransformPoint(originalLocalPosition)
-                : weaponRoot.position;
+            bool usesPrefabProjectile = projectilePrefab != null;
+            Vector3 projectileScale = usesPrefabProjectile ? projectileRoot.localScale : weaponRoot.lossyScale;
 
             Sequence sequence = DOTween.Sequence().SetLink(gameObject);
-            weaponRoot.SetParent(null, true);
-            sequence.Append(weaponRoot.DOMove(targetPosition, weaponThrowOutDuration).SetEase(weaponThrowOutEase));
-            sequence.Join(weaponRoot.DORotate(Vector3.forward * weaponThrowSpinDegrees, weaponThrowOutDuration, RotateMode.WorldAxisAdd));
+            projectileRoot.SetParent(projectileParent, true);
+            projectileRoot.localScale = projectileScale;
+            projectile.SetActive(true);
+            SetRenderersEnabled(projectileRoot, true);
+            weaponRoot.localScale = Vector3.zero;
+
+            sequence.Append(projectileRoot.DOMove(targetPosition, weaponThrowOutDuration).SetEase(weaponThrowOutEase));
+            sequence.Join(projectileRoot.DORotate(Vector3.forward * weaponThrowSpinDegrees, weaponThrowOutDuration, RotateMode.WorldAxisAdd));
             sequence.AppendInterval(weaponThrowHoldDuration);
-            sequence.AppendCallback(() =>
-            {
-                returnPosition = originalParent != null
-                    ? originalParent.TransformPoint(originalLocalPosition)
-                    : returnPosition;
-            });
-            sequence.Append(weaponRoot.DOMove(returnPosition, weaponThrowReturnDuration).SetEase(weaponThrowReturnEase));
-            sequence.Join(weaponRoot.DORotate(Vector3.forward * weaponThrowSpinDegrees, weaponThrowReturnDuration, RotateMode.WorldAxisAdd));
+            sequence.Append(projectileRoot.DOMove(weaponRoot.position, weaponThrowReturnDuration).SetEase(weaponThrowReturnEase));
+            sequence.Join(projectileRoot.DORotate(Vector3.forward * weaponThrowSpinDegrees, weaponThrowReturnDuration, RotateMode.WorldAxisAdd));
             sequence.OnComplete(() =>
             {
-                weaponRoot.SetParent(originalParent, true);
-                weaponRoot.localPosition = originalLocalPosition;
-                weaponRoot.localRotation = originalLocalRotation;
                 weaponRoot.localScale = originalLocalScale;
+                Destroy(projectile);
+            });
+            sequence.OnKill(() =>
+            {
+                if (weaponRoot != null)
+                {
+                    weaponRoot.localScale = originalLocalScale;
+                }
+
+                if (projectile != null)
+                {
+                    Destroy(projectile);
+                }
             });
             return sequence;
         }
@@ -185,6 +194,15 @@ namespace PlayableAdsShort
             if (weaponRoot != null)
             {
                 weaponRoot.localScale = equipped ? _weaponBaseScale : Vector3.zero;
+            }
+        }
+
+        private static void SetRenderersEnabled(Transform root, bool enabled)
+        {
+            Renderer[] renderers = root.GetComponentsInChildren<Renderer>(includeInactive: true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                renderers[i].enabled = enabled;
             }
         }
 

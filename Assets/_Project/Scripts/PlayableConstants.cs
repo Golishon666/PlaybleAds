@@ -86,6 +86,10 @@ namespace PlayableAdsShort
             public const string PowerTrigger = "Power";
             public const string DeathTrigger = "Death";
             public const string OpenTrigger = "Open";
+            public const string OpenState = "Open";
+            public const int DefaultLayer = 0;
+            public const float CompleteNormalizedTime = 1f;
+            public const float AnimatorWaitTimeout = 3f;
 
             public static readonly int MovingBoolHash = Animator.StringToHash(MovingBool);
             public static readonly int AttackTriggerHash = Animator.StringToHash(AttackTrigger);
@@ -94,6 +98,7 @@ namespace PlayableAdsShort
             public static readonly int PowerTriggerHash = Animator.StringToHash(PowerTrigger);
             public static readonly int DeathTriggerHash = Animator.StringToHash(DeathTrigger);
             public static readonly int OpenTriggerHash = Animator.StringToHash(OpenTrigger);
+            public static readonly int OpenStateHash = Animator.StringToHash(OpenState);
         }
     }
 }
