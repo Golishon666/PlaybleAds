@@ -41,7 +41,6 @@ namespace PlayableAdsShort
             hero.SetStrength(state.HeroStrength);
             hero.SetPoweredVisual(true);
             _stage.Play(_config.powerClip, 0.85f);
-            await AwaitTween(hero.Punch(), token);
             await AwaitTween(chest.HideAfterUpgrade(), token);
         }
 
@@ -78,7 +77,11 @@ namespace PlayableAdsShort
             hero.SetStrength(state.HeroStrength);
             hero.SetPoweredVisual(state.HeroStrength >= 13);
             await AwaitTween(weaponThrow, token);
-            await AwaitTween(hero.Punch(), token);
+            if (weaponThrow != null)
+            {
+                await AwaitTween(hero.Punch(), token);
+            }
+
             await DelaySecondsAsync(_config.attackRecoveryDuration, token);
         }
 

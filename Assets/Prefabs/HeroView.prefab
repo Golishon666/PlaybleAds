@@ -259,6 +259,7 @@ MonoBehaviour:
   punchDuration: 0.22
   punchVibrato: 5
   punchElasticity: 0.65
+  strengthIncreasePulseDuration: 0.3
   rewardCatchOffset: {x: 0, y: 0.85, z: -0.2}
 --- !u!1 &3153212019997195213
 GameObject:
@@ -508,8 +509,8 @@ MonoBehaviour:
   textColor: {r: 1, g: 1, b: 1, a: 1}
   shadowColor: {r: 0, g: 0, b: 0, a: 0.9}
   invalidColor: {r: 1, g: 0.12, b: 0.05, a: 1}
-  pulseScale: 0.16
-  pulseVibrato: 5
+  pulseScale: 0.3
+  pulseVibrato: 7
 --- !u!1001 &2739479993913862821
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 import argparse
 import base64
+import gzip
 from pathlib import Path
 
 
@@ -11,7 +12,7 @@ def find_one(build_dir: Path, pattern: str) -> Path:
 
 
 def encoded(path: Path) -> str:
-    return base64.b64encode(path.read_bytes()).decode("ascii")
+    return base64.b64encode(gzip.compress(path.read_bytes(), compresslevel=9)).decode("ascii")
 
 
 def main() -> None:
@@ -50,7 +51,10 @@ def main() -> None:
   <div id="progress"><div id="bar"></div></div>
   <script>
     const payloads = {payloads!r};
-    function blobUrl(base64, type) {{
+    async function blobUrl(base64, type) {{
+      if (!("DecompressionStream" in self)) {{
+        throw new Error("This browser does not support gzip decompression for the single-file build.");
+      }}
       const binary = atob(base64);
       const chunks = [];
       for (let offset = 0; offset < binary.length; offset += 1048576) {{
@@ -59,28 +63,32 @@ def main() -> None:
         for (let i = 0; i < slice.length; i++) bytes[i] = slice.charCodeAt(i);
         chunks.push(bytes);
       }}
-      return URL.createObjectURL(new Blob(chunks, {{type}}));
+      const stream = new Blob(chunks, {{type: "application/gzip"}}).stream().pipeThrough(new DecompressionStream("gzip"));
+      const buffer = await new Response(stream).arrayBuffer();
+      return URL.createObjectURL(new Blob([buffer], {{type}}));
     }}
-    const urls = {{
-      loader: blobUrl(payloads.loader, "text/javascript"),
-      data: blobUrl(payloads.data, "application/octet-stream"),
-      framework: blobUrl(payloads.framework, "text/javascript"),
-      wasm: blobUrl(payloads.wasm, "application/wasm")
-    }};
-    const script = document.createElement("script");
-    script.src = urls.loader;
-    script.onload = () => createUnityInstance(document.querySelector("#unity-canvas"), {{
-      dataUrl: urls.data,
-      frameworkUrl: urls.framework,
-      codeUrl: urls.wasm,
-      companyName: "Playable Ads Short",
-      productName: "Playable Ads Short",
-      productVersion: "1.0"
-    }}, progress => {{
-      document.querySelector("#bar").style.width = `${{progress * 100}}%`;
-    }}).then(() => document.querySelector("#progress").remove())
-      .catch(error => alert(error));
-    document.body.appendChild(script);
+    (async () => {{
+      const urls = {{
+        loader: await blobUrl(payloads.loader, "text/javascript"),
+        data: await blobUrl(payloads.data, "application/octet-stream"),
+        framework: await blobUrl(payloads.framework, "text/javascript"),
+        wasm: await blobUrl(payloads.wasm, "application/wasm")
+      }};
+      const script = document.createElement("script");
+      script.src = urls.loader;
+      script.onload = () => createUnityInstance(document.querySelector("#unity-canvas"), {{
+        dataUrl: urls.data,
+        frameworkUrl: urls.framework,
+        codeUrl: urls.wasm,
+        companyName: "Playable Ads Short",
+        productName: "Playable Ads Short",
+        productVersion: "1.0"
+      }}, progress => {{
+        document.querySelector("#bar").style.width = `${{progress * 100}}%`;
+      }}).then(() => document.querySelector("#progress").remove())
+        .catch(error => alert(error));
+      document.body.appendChild(script);
+    }})().catch(error => alert(error));
   </script>
 </body>
 </html>

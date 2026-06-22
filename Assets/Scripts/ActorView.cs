@@ -23,6 +23,7 @@ namespace PlayableAdsShort
         public float punchDuration = 0.22f;
         public int punchVibrato = 5;
         public float punchElasticity = 0.65f;
+        public float strengthIncreasePulseDuration = 0.28f;
         public Vector3 rewardCatchOffset = new Vector3(0f, 0.85f, -0.2f);
         public float weaponThrowOutDuration = 0.24f;
         public float weaponThrowReturnDuration = 0.28f;
@@ -34,6 +35,8 @@ namespace PlayableAdsShort
         private Vector3 _visualBaseScale;
         private Vector3 _weaponBaseScale;
         private bool _weaponEquipped;
+        private int _strength;
+        private bool _strengthInitialized;
 
         public Vector3 Position => motionRoot.position;
         public Vector3 RewardCatchPosition => weaponRoot != null ? weaponRoot.position : motionRoot.position + rewardCatchOffset;
@@ -65,7 +68,15 @@ namespace PlayableAdsShort
 
         public void SetStrength(int strength)
         {
+            bool increased = _strengthInitialized && strength > _strength;
+            _strength = strength;
+            _strengthInitialized = true;
+
             strengthBadge.SetValue(strength);
+            if (increased)
+            {
+                strengthBadge.Pulse(strengthIncreasePulseDuration);
+            }
         }
 
         public Tween MoveAlong(IReadOnlyList<Vector3> route, float speed)
@@ -113,10 +124,7 @@ namespace PlayableAdsShort
         public Tween Punch()
         {
             SetTrigger(PlayableConstants.Animation.PowerTriggerHash);
-            return visualRoot
-                .DOPunchScale(Vector3.one * punchScale, punchDuration, punchVibrato, punchElasticity)
-                .SetEase(punchEase)
-                .SetLink(gameObject);
+            return null;
         }
 
         public void PlayAttack()
