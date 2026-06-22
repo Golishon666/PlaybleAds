@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -46,7 +45,7 @@ namespace PlayableAdsShort
             _stage.Play(_config.chestClip, 0.95f);
             chest.Open();
             await WaitForChestOpenAsync(chest, token);
-            PlayBurst(_factory.CreateChestBurstVfx(), chest.Position);
+            PlayBurst(_factory.CreateRewardSparkVfx(), chest.Position);
             PlayBurst(_factory.CreateChestRewardFlightVfx(), chest.Position);
             await AwaitTween(chest.PlayRewardFlight(hero.RewardCatchPosition), token);
             state.OpenChest(chest.Reward);
@@ -65,28 +64,10 @@ namespace PlayableAdsShort
             _stage.Play(_config.clickClip, 0.7f);
             IReadOnlyList<Vector3> route = BuildRoute(hero.Position, target.AttackSpot);
             await PlayPathPreviewAsync(route, target.HintPosition, target.HintScale, token);
-            bool useEarlySuperAttack = IsSecondGoblinTarget(target);
-            bool superAttackPlayed = false;
-            Action earlySuperAttack = null;
-            if (useEarlySuperAttack)
-            {
-                earlySuperAttack = () =>
-                {
-                    superAttackPlayed = true;
-                    hero.PlaySuperAttack();
-                };
-            }
-
             try
             {
                 _stage.PlayFootsteps(_config.footstepClip, _config.footstepVolume);
-                await AwaitMovementTween(
-                    hero.MoveAlong(route, _config.moveSpeed),
-                    hero,
-                    route,
-                    token,
-                    useEarlySuperAttack ? GetTwoPathDotsBeforeEndDistance(route) : -1f,
-                    earlySuperAttack);
+                await AwaitMovementTween(hero.MoveAlong(route, _config.moveSpeed), hero, route, token);
             }
             finally
             {
@@ -94,11 +75,11 @@ namespace PlayableAdsShort
                 ClearActionPath();
             }
 
-            if (!superAttackPlayed && IsSecondGoblinTarget(target))
+            if (IsSecondGoblinTarget(target))
             {
-                hero.PlaySuperAttack();
+                hero.PlaySecondAttack();
             }
-            else if (!superAttackPlayed)
+            else
             {
                 hero.PlayAttack();
             }
@@ -126,7 +107,6 @@ namespace PlayableAdsShort
 
             await AwaitTween(target.HitImpact(), token);
             target.SetDefeated();
-            hero.SetSuperAttacking(false);
             PlayBurst(_factory.CreateDeathVfx(target), target.ImpactPosition);
             state.Defeat(target.Id, target.Reward);
             hero.SetStrength(state.HeroStrength);
@@ -452,43 +432,23 @@ namespace PlayableAdsShort
             Tween tween,
             ActorView hero,
             IReadOnlyList<Vector3> route,
-            CancellationToken token,
-            float triggerDistance = -1f,
-            Action triggerAction = null)
+            CancellationToken token)
         {
             if (tween == null)
             {
                 return;
             }
 
-            bool triggered = false;
             while (tween.IsActive() && tween.IsPlaying())
             {
                 token.ThrowIfCancellationRequested();
                 float progressDistance = GetRouteProgressDistance(route, hero.Position);
                 HidePassedActionPathDots(progressDistance);
-                if (!triggered && triggerAction != null && progressDistance >= triggerDistance)
-                {
-                    triggered = true;
-                    triggerAction.Invoke();
-                }
 
                 await UniTask.Yield(PlayerLoopTiming.Update, token);
             }
 
-            if (!triggered && triggerAction != null)
-            {
-                triggerAction.Invoke();
-            }
-
             HidePassedActionPathDots(float.PositiveInfinity);
-        }
-
-        private static float GetTwoPathDotsBeforeEndDistance(IReadOnlyList<Vector3> route)
-        {
-            float routeLength = GetRouteLength(route);
-            float triggerDotIndex = Mathf.Max(0f, PlayableConstants.Motion.PathDotCount - 2f);
-            return routeLength * (triggerDotIndex / PlayableConstants.Motion.PathDotCount);
         }
 
         private sealed class PathDotProgress

@@ -135,18 +135,9 @@ namespace PlayableAdsShort
             SetTrigger(PlayableConstants.Animation.AttackTriggerHash);
         }
 
-        public void PlaySuperAttack()
+        public void PlaySecondAttack()
         {
-            SetSuperAttacking(true);
-            SetTrigger(PlayableConstants.Animation.SuperAttackTriggerHash);
-        }
-
-        public void SetSuperAttacking(bool active)
-        {
-            if (animator != null)
-            {
-                animator.SetBool(PlayableConstants.Animation.SuperAttackingBoolHash, active);
-            }
+            SetTrigger(PlayableConstants.Animation.SecondAttackTriggerHash);
         }
 
         public void PlayShopUpdate()

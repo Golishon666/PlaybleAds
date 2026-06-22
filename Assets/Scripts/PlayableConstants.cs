@@ -82,8 +82,7 @@ namespace PlayableAdsShort
         {
             public const string MovingBool = "Moving";
             public const string AttackTrigger = "Attack";
-            public const string SuperAttackTrigger = "SuperAttack";
-            public const string SuperAttackingBool = "SuperAttacking";
+            public const string SecondAttackTrigger = "SecondAttack";
             public const string HitTrigger = "Hit";
             public const string InvalidTrigger = "Invalid";
             public const string PowerTrigger = "Power";
@@ -97,8 +96,7 @@ namespace PlayableAdsShort
 
             public static readonly int MovingBoolHash = Animator.StringToHash(MovingBool);
             public static readonly int AttackTriggerHash = Animator.StringToHash(AttackTrigger);
-            public static readonly int SuperAttackTriggerHash = Animator.StringToHash(SuperAttackTrigger);
-            public static readonly int SuperAttackingBoolHash = Animator.StringToHash(SuperAttackingBool);
+            public static readonly int SecondAttackTriggerHash = Animator.StringToHash(SecondAttackTrigger);
             public static readonly int HitTriggerHash = Animator.StringToHash(HitTrigger);
             public static readonly int InvalidTriggerHash = Animator.StringToHash(InvalidTrigger);
             public static readonly int PowerTriggerHash = Animator.StringToHash(PowerTrigger);
