@@ -68,17 +68,6 @@ namespace PlayableAdsShort
             strengthBadge.SetValue(strength);
         }
 
-        public Tween MoveTo(Vector3 position, float duration)
-        {
-            Face(position);
-            SetMoving(true);
-            return motionRoot
-                .DOMove(position, duration)
-                .SetEase(moveEase)
-                .OnComplete(() => SetMoving(false))
-                .SetLink(gameObject);
-        }
-
         public Tween MoveAlong(IReadOnlyList<Vector3> route, float speed)
         {
             var points = new List<Vector3>();

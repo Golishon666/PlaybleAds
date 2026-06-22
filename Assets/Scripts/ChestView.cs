@@ -43,7 +43,6 @@ namespace PlayableAdsShort
         private Vector3 _rewardVisualBaseLocalEuler;
 
         public override string Id => string.IsNullOrWhiteSpace(targetId) ? PlayableConstants.Ids.Chest : targetId;
-        public int Strength => strength;
         public int Reward => reward;
         public Vector3 Position => transform.position;
         public Vector3 HintPosition => hintAnchor != null ? hintAnchor.position : transform.position;

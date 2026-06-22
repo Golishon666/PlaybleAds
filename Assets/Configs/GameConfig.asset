@@ -13,18 +13,15 @@ MonoBehaviour:
   m_Name: GameConfig
   m_EditorClassIdentifier: Assembly-CSharp::PlayableAdsShort.GameConfig
   heroPrefab: {fileID: 8905361182026014374, guid: 10f060fd4b6d53d4f8cdb8733f5aecba, type: 3}
-  targetPrefab: {fileID: 7759337478929845700, guid: c99a6008ae655554d9a4d7349e3d047d, type: 3}
   chestPrefab: {fileID: 8959906264148603970, guid: 9be999613f6e35c41b864259e3a772d8, type: 3}
   hintRingPrefab: {fileID: 4826557992708884082, guid: 9160c42f83ae3b24a83589c4c04849e7, type: 3}
   pathDotPrefab: {fileID: 7053333940200826025, guid: 61573e8523d1750429fae3dc25b5808a, type: 3}
   vfxBurstPrefab: {fileID: 9118864157444277157, guid: 89be2165603436e4e93d2573a9d6384c, type: 3}
-  slashVfxPrefab: {fileID: 7761072816468756403, guid: 71a931274b8c30a4cbbeaa62b458cd31, type: 3}
-  chestBurstPrefab: {fileID: 1260695732241329861, guid: 776f268cd69ea7649ade3c16d874ffd0, type: 3}
   groundBurstPrefab: {fileID: 2592182256280145336, guid: 46183b9480c8ced408ce9feb19847769, type: 3}
   waterBurstPrefab: {fileID: 4161729216873010240, guid: 4489253564958584eb6e231a478d2c4c, type: 3}
   octopusDeathBurstPrefab: {fileID: 7001000000000000003, guid: 7960f796252b48929b528d82fca5669f, type: 3}
   rewardSparkPrefab: {fileID: 9201000000000000001, guid: 58a94ee8d59a4a5f9d4ccfdc0f76f2d1, type: 3}
-  chestRewardFlightVfxPrefab: {fileID: 9301000000000000001, guid: 9f85b46bf5134e6bb85d7efa17a51543, type: 3}
+  chestRewardFlightVfxPrefab: {fileID: 930100000000000001, guid: 9f85b46bf5134e6bb85d7efa17a51543, type: 3}
   weaponProjectilePrefab: {fileID: 7101000000000000001, guid: 7927d8d5db5e4f7ba237be6ecc01985e, type: 3}
   ctaOverlayPrefab: {fileID: 5201014329209918098, guid: 691e52f40040bb74dbc280b7e25165ee, type: 3}
   clickClip: {fileID: 8300000, guid: 134e5232937132743a689c5e40184163, type: 3}
@@ -37,10 +34,7 @@ MonoBehaviour:
   footstepClip: {fileID: 8300000, guid: bde838eb9d2f7824aa0ce31d03e4a297, type: 3}
   footstepVolume: 0.42
   heroStartStrength: 2
-  moveDuration: 0.68
   moveSpeed: 3.8
-  attackDuration: 0.42
-  hintPulseDuration: 0.62
   pathDotDelay: 0.045
   invalidShakeDuration: 0.28
   ctaDelay: 0.45
@@ -48,5 +42,5 @@ MonoBehaviour:
   chestRewardReleaseNormalizedTime: 0.8
   selectionPulseDuration: 0.34
   attackImpactDelay: 0.34
+  secondAttackImpactDelay: 1.12
   attackRecoveryDuration: 0.56
-  defeatedHoldDuration: 0.55

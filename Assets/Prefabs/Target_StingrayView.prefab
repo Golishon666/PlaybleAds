@@ -451,7 +451,6 @@ MonoBehaviour:
   availabilityGlow: {fileID: 0}
   strengthBadge: {fileID: 8773460260772146197}
   targetId: stingray
-  displayName: Stingray
   kind: 2
   strength: 13
   reward: 13
@@ -459,7 +458,6 @@ MonoBehaviour:
   hintOrder: 0
   hintScale: {x: 1.25, y: 1.25, z: 1.25}
   impactOffset: {x: 0, y: 0.65, z: -0.05}
-  slashRotation: -18
   availableGlowColor: {r: 1, g: 1, b: 1, a: 1}
   unavailableGlowColor: {r: 1, g: 1, b: 1, a: 1}
   invalidColor: {r: 1, g: 0, b: 0, a: 1}

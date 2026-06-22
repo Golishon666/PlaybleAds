@@ -27,20 +27,7 @@ namespace PlayableAdsShort
 
         public async UniTask PlayChestAsync(ActorView hero, ChestView chest, GameState state, CancellationToken token)
         {
-            ClearHint();
-            _stage.Play(_config.clickClip, 0.75f);
-            IReadOnlyList<Vector3> route = BuildRoute(hero.Position, chest.ApproachSpot);
-            await PlayPathPreviewAsync(route, chest.HintPosition, chest.HintScale, token);
-            try
-            {
-                _stage.PlayFootsteps(_config.footstepClip, _config.footstepVolume);
-                await AwaitMovementTween(hero.MoveAlong(route, _config.moveSpeed), hero, route, token);
-            }
-            finally
-            {
-                _stage.StopFootsteps();
-                ClearActionPath();
-            }
+            await MoveHeroToAsync(hero, chest.ApproachSpot, chest.HintPosition, chest.HintScale, 0.75f, token);
 
             _stage.Play(_config.chestClip, 0.95f);
             chest.Open();
@@ -60,22 +47,10 @@ namespace PlayableAdsShort
 
         public async UniTask PlayAttackAsync(ActorView hero, TargetView target, GameState state, CancellationToken token)
         {
-            ClearHint();
-            _stage.Play(_config.clickClip, 0.7f);
-            IReadOnlyList<Vector3> route = BuildRoute(hero.Position, target.AttackSpot);
-            await PlayPathPreviewAsync(route, target.HintPosition, target.HintScale, token);
-            try
-            {
-                _stage.PlayFootsteps(_config.footstepClip, _config.footstepVolume);
-                await AwaitMovementTween(hero.MoveAlong(route, _config.moveSpeed), hero, route, token);
-            }
-            finally
-            {
-                _stage.StopFootsteps();
-                ClearActionPath();
-            }
+            await MoveHeroToAsync(hero, target.AttackSpot, target.HintPosition, target.HintScale, 0.7f, token);
 
-            if (IsSecondGoblinTarget(target))
+            bool isSecondGoblin = IsSecondGoblinTarget(target);
+            if (isSecondGoblin)
             {
                 hero.PlaySecondAttack();
             }
@@ -87,17 +62,8 @@ namespace PlayableAdsShort
             hero.Face(target.Position);
             _stage.Play(target.Kind == TargetKind.WaterEnemy ? _config.powerClip : _config.hitClip, 0.63f);
 
-            Tween weaponThrow = null;
-            if (target.Kind == TargetKind.WaterEnemy)
-            {
-                await UniTask.Delay((int)(_config.attackImpactDelay * 1000f), cancellationToken: token);
-                weaponThrow = hero.ThrowWeaponAt(target.ImpactPosition, _config.weaponProjectilePrefab, _stage.effectsLayer);
-                await UniTask.Delay((int)(hero.weaponThrowOutDuration * 1000f), cancellationToken: token);
-            }
-            else
-            {
-                await UniTask.Delay((int)(_config.attackImpactDelay * 1000f), cancellationToken: token);
-            }
+            await DelaySecondsAsync(isSecondGoblin ? _config.secondAttackImpactDelay : _config.attackImpactDelay, token);
+            Tween weaponThrow = await PlayWaterWeaponThrowAsync(hero, target, token);
 
             PlayBurst(_factory.CreateImpactVfx(target.Kind), target.ImpactPosition);
             if (target.Kind == TargetKind.WaterEnemy)
@@ -113,7 +79,7 @@ namespace PlayableAdsShort
             hero.SetPoweredVisual(state.HeroStrength >= 13);
             await AwaitTween(weaponThrow, token);
             await AwaitTween(hero.Punch(), token);
-            await UniTask.Delay((int)(_config.attackRecoveryDuration * 1000f), cancellationToken: token);
+            await DelaySecondsAsync(_config.attackRecoveryDuration, token);
         }
 
         public async UniTask PlayInvalidAsync(TargetView target, CancellationToken token, bool showMarker = true)
@@ -159,7 +125,7 @@ namespace PlayableAdsShort
             {
                 if (hintObject != null)
                 {
-                    Object.Destroy(hintObject);
+                    UnityEngine.Object.Destroy(hintObject);
                 }
             }
 
@@ -184,14 +150,40 @@ namespace PlayableAdsShort
             await UniTask.Delay(PlayableConstants.Motion.PathPreviewDelayMs, cancellationToken: token);
         }
 
+        private async UniTask MoveHeroToAsync(
+            ActorView hero,
+            Vector3 destination,
+            Vector3 markerPosition,
+            Vector3 markerScale,
+            float clickVolume,
+            CancellationToken token)
+        {
+            ClearHint();
+            _stage.Play(_config.clickClip, clickVolume);
+
+            IReadOnlyList<Vector3> route = BuildRoute(hero.Position, destination);
+            await PlayPathPreviewAsync(route, markerPosition, markerScale, token);
+
+            try
+            {
+                _stage.PlayFootsteps(_config.footstepClip, _config.footstepVolume);
+                await AwaitMovementTween(hero.MoveAlong(route, _config.moveSpeed), hero, route, token);
+            }
+            finally
+            {
+                _stage.StopFootsteps();
+                ClearActionPath();
+            }
+        }
+
         private void CreatePath(IReadOnlyList<Vector3> route, bool persistent)
         {
-            float routeLength = GetRouteLength(route);
+            float routeLength = RouteMetrics.GetLength(route);
             for (int i = 1; i <= PlayableConstants.Motion.PathDotCount; i++)
             {
                 float t = i / (float)PlayableConstants.Motion.PathDotCount;
                 PathDotView dot = _factory.CreatePathDot();
-                dot.Show(SampleRoute(route, t));
+                dot.Show(RouteMetrics.Sample(route, t));
                 dot.Pop(i * _config.pathDotDelay, keepVisible: true);
                 if (persistent)
                 {
@@ -226,7 +218,7 @@ namespace PlayableAdsShort
             {
                 if (pathObject != null)
                 {
-                    Object.Destroy(pathObject);
+                    UnityEngine.Object.Destroy(pathObject);
                 }
             }
 
@@ -255,77 +247,91 @@ namespace PlayableAdsShort
             return route;
         }
 
-        private static Vector3 SampleRoute(IReadOnlyList<Vector3> route, float normalizedDistance)
+        private async UniTask<Tween> PlayWaterWeaponThrowAsync(ActorView hero, TargetView target, CancellationToken token)
         {
-            if (route.Count == 0)
+            if (target.Kind != TargetKind.WaterEnemy)
             {
-                return Vector3.zero;
+                return null;
             }
 
-            float totalLength = 0f;
-            for (int i = 1; i < route.Count; i++)
-            {
-                totalLength += Vector3.Distance(route[i - 1], route[i]);
-            }
-
-            float targetDistance = totalLength * normalizedDistance;
-            float travelled = 0f;
-            for (int i = 1; i < route.Count; i++)
-            {
-                float segmentLength = Vector3.Distance(route[i - 1], route[i]);
-                if (travelled + segmentLength >= targetDistance)
-                {
-                    float segmentT = segmentLength <= 0.0001f ? 0f : (targetDistance - travelled) / segmentLength;
-                    return Vector3.Lerp(route[i - 1], route[i], segmentT);
-                }
-
-                travelled += segmentLength;
-            }
-
-            return route[route.Count - 1];
+            Tween weaponThrow = hero.ThrowWeaponAt(target.ImpactPosition, _config.weaponProjectilePrefab, _stage.effectsLayer);
+            await DelaySecondsAsync(hero.weaponThrowOutDuration, token);
+            return weaponThrow;
         }
 
-        private static float GetRouteLength(IReadOnlyList<Vector3> route)
+        private static UniTask DelaySecondsAsync(float seconds, CancellationToken token)
         {
-            float totalLength = 0f;
-            for (int i = 1; i < route.Count; i++)
-            {
-                totalLength += Vector3.Distance(route[i - 1], route[i]);
-            }
-
-            return totalLength;
+            return UniTask.Delay((int)(seconds * 1000f), cancellationToken: token);
         }
 
-        private static float GetRouteProgressDistance(IReadOnlyList<Vector3> route, Vector3 position)
+        private static class RouteMetrics
         {
-            float bestDistance = 0f;
-            float bestSqrDistance = float.PositiveInfinity;
-            float travelled = 0f;
-
-            for (int i = 1; i < route.Count; i++)
+            public static Vector3 Sample(IReadOnlyList<Vector3> route, float normalizedDistance)
             {
-                Vector3 start = route[i - 1];
-                Vector3 end = route[i];
-                Vector3 segment = end - start;
-                float segmentLength = segment.magnitude;
-                if (segmentLength <= 0.0001f)
+                if (route.Count == 0)
                 {
-                    continue;
+                    return Vector3.zero;
                 }
 
-                float t = Mathf.Clamp01(Vector3.Dot(position - start, segment) / (segmentLength * segmentLength));
-                Vector3 projected = Vector3.Lerp(start, end, t);
-                float sqrDistance = (position - projected).sqrMagnitude;
-                if (sqrDistance < bestSqrDistance)
+                float targetDistance = GetLength(route) * normalizedDistance;
+                float travelled = 0f;
+                for (int i = 1; i < route.Count; i++)
                 {
-                    bestSqrDistance = sqrDistance;
-                    bestDistance = travelled + segmentLength * t;
+                    float segmentLength = Vector3.Distance(route[i - 1], route[i]);
+                    if (travelled + segmentLength >= targetDistance)
+                    {
+                        float segmentT = segmentLength <= 0.0001f ? 0f : (targetDistance - travelled) / segmentLength;
+                        return Vector3.Lerp(route[i - 1], route[i], segmentT);
+                    }
+
+                    travelled += segmentLength;
                 }
 
-                travelled += segmentLength;
+                return route[route.Count - 1];
             }
 
-            return bestDistance;
+            public static float GetLength(IReadOnlyList<Vector3> route)
+            {
+                float totalLength = 0f;
+                for (int i = 1; i < route.Count; i++)
+                {
+                    totalLength += Vector3.Distance(route[i - 1], route[i]);
+                }
+
+                return totalLength;
+            }
+
+            public static float GetProgressDistance(IReadOnlyList<Vector3> route, Vector3 position)
+            {
+                float bestDistance = 0f;
+                float bestSqrDistance = float.PositiveInfinity;
+                float travelled = 0f;
+
+                for (int i = 1; i < route.Count; i++)
+                {
+                    Vector3 start = route[i - 1];
+                    Vector3 end = route[i];
+                    Vector3 segment = end - start;
+                    float segmentLength = segment.magnitude;
+                    if (segmentLength <= 0.0001f)
+                    {
+                        continue;
+                    }
+
+                    float t = Mathf.Clamp01(Vector3.Dot(position - start, segment) / (segmentLength * segmentLength));
+                    Vector3 projected = Vector3.Lerp(start, end, t);
+                    float sqrDistance = (position - projected).sqrMagnitude;
+                    if (sqrDistance < bestSqrDistance)
+                    {
+                        bestSqrDistance = sqrDistance;
+                        bestDistance = travelled + segmentLength * t;
+                    }
+
+                    travelled += segmentLength;
+                }
+
+                return bestDistance;
+            }
         }
 
         private void HidePassedActionPathDots(float progressDistance)
@@ -442,7 +448,7 @@ namespace PlayableAdsShort
             while (tween.IsActive() && tween.IsPlaying())
             {
                 token.ThrowIfCancellationRequested();
-                float progressDistance = GetRouteProgressDistance(route, hero.Position);
+                float progressDistance = RouteMetrics.GetProgressDistance(route, hero.Position);
                 HidePassedActionPathDots(progressDistance);
 
                 await UniTask.Yield(PlayerLoopTiming.Update, token);

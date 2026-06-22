@@ -65,13 +65,6 @@ namespace PlayableAdsShort
 
             return new[] { finish.transform.position };
         }
-
-        public Vector3 ProjectToWalkable(Vector3 position)
-        {
-            NavigationNode node = FindClosest(position);
-            return node != null ? node.transform.position : position;
-        }
-
         private NavigationNode FindClosest(Vector3 position)
         {
             if (nodes == null)

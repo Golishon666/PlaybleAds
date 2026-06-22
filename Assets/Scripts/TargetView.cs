@@ -15,7 +15,6 @@ namespace PlayableAdsShort
         public SpriteRenderer availabilityGlow;
         public WorldStrengthBadge strengthBadge;
         public string targetId;
-        public string displayName;
         public TargetKind kind = TargetKind.GroundEnemy;
         public int strength = 1;
         public int reward = 1;
@@ -23,7 +22,6 @@ namespace PlayableAdsShort
         public int hintOrder;
         public Vector3 hintScale = Vector3.one;
         public Vector3 impactOffset = new Vector3(0f, 0.65f, -0.05f);
-        public float slashRotation;
         public Color availableGlowColor = Color.white;
         public Color unavailableGlowColor = Color.white;
         public Color invalidColor = Color.red;
@@ -40,7 +38,6 @@ namespace PlayableAdsShort
         private Color _glowBaseColor;
 
         public override string Id => string.IsNullOrWhiteSpace(targetId) ? gameObject.name : targetId;
-        public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? gameObject.name : displayName;
         public TargetKind Kind => kind;
         public int Strength => strength;
         public int Reward => reward;
@@ -51,7 +48,6 @@ namespace PlayableAdsShort
         public Vector3 HintScale => hintScale;
         public Vector3 AttackSpot => attackAnchor != null ? attackAnchor.position : transform.position;
         public Vector3 ImpactPosition => impactAnchor != null ? impactAnchor.position : transform.position + impactOffset;
-        public float SlashRotation => slashRotation;
 
         private void Awake()
         {

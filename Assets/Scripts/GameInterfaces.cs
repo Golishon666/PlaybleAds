@@ -30,8 +30,6 @@ namespace PlayableAdsShort
         TargetView[] CreateTargets();
         HintRingView CreateHintRing();
         PathDotView CreatePathDot();
-        VfxBurstView CreateSlashVfx();
-        VfxBurstView CreateChestBurstVfx();
         VfxBurstView CreateChestRewardFlightVfx();
         VfxBurstView CreateRewardSparkVfx();
         VfxBurstView CreateImpactVfx(TargetKind targetKind);

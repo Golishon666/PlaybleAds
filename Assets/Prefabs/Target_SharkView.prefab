@@ -540,7 +540,6 @@ MonoBehaviour:
   availabilityGlow: {fileID: 0}
   strengthBadge: {fileID: 7508634088551577609}
   targetId: shark
-  displayName: Shark
   kind: 2
   strength: 37
   reward: 37
@@ -548,7 +547,6 @@ MonoBehaviour:
   hintOrder: 0
   hintScale: {x: 1.2, y: 1.2, z: 1.2}
   impactOffset: {x: 0, y: 0.65, z: -0.05}
-  slashRotation: -18
   availableGlowColor: {r: 1, g: 1, b: 1, a: 1}
   unavailableGlowColor: {r: 1, g: 1, b: 1, a: 1}
   invalidColor: {r: 1, g: 0, b: 0, a: 1}

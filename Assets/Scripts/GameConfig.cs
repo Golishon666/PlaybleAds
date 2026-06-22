@@ -14,13 +14,10 @@ namespace PlayableAdsShort
     {
         [Header("Prefabs")]
         public ActorView heroPrefab;
-        public TargetView targetPrefab;
         public ChestView chestPrefab;
         public HintRingView hintRingPrefab;
         public PathDotView pathDotPrefab;
         public VfxBurstView vfxBurstPrefab;
-        public VfxBurstView slashVfxPrefab;
-        public VfxBurstView chestBurstPrefab;
         public VfxBurstView groundBurstPrefab;
         public VfxBurstView waterBurstPrefab;
         public VfxBurstView octopusDeathBurstPrefab;
@@ -44,10 +41,7 @@ namespace PlayableAdsShort
         public int heroStartStrength = PlayableConstants.Gameplay.HeroStartStrength;
 
         [Header("Motion")]
-        public float moveDuration = PlayableConstants.Motion.MoveDuration;
         public float moveSpeed = 3.8f;
-        public float attackDuration = PlayableConstants.Motion.AttackDuration;
-        public float hintPulseDuration = PlayableConstants.Motion.HintPulseDuration;
         public float pathDotDelay = PlayableConstants.Motion.PathDotDelay;
         public float invalidShakeDuration = PlayableConstants.Motion.InvalidShakeDuration;
         public float ctaDelay = PlayableConstants.Motion.CtaDelay;
@@ -55,7 +49,7 @@ namespace PlayableAdsShort
         [Range(0f, 1f)] public float chestRewardReleaseNormalizedTime = PlayableConstants.Motion.ChestRewardReleaseNormalizedTime;
         public float selectionPulseDuration = PlayableConstants.Motion.SelectionPulseDuration;
         public float attackImpactDelay = 0.34f;
+        public float secondAttackImpactDelay = PlayableConstants.Motion.SecondAttackImpactDelay;
         public float attackRecoveryDuration = 0.58f;
-        public float defeatedHoldDuration = 0.55f;
     }
 }

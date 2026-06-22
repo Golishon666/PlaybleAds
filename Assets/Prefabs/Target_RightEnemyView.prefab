@@ -408,7 +408,6 @@ MonoBehaviour:
   availabilityGlow: {fileID: 4896353001991749872}
   strengthBadge: {fileID: 9112676360903995659}
   targetId: right_enemy
-  displayName: Dock Guard
   kind: 1
   strength: 3
   reward: 3
@@ -416,7 +415,6 @@ MonoBehaviour:
   hintOrder: 0
   hintScale: {x: 0.9, y: 0.9, z: 0.9}
   impactOffset: {x: 0, y: 0.65, z: -0.05}
-  slashRotation: 0
   availableGlowColor: {r: 1, g: 1, b: 1, a: 1}
   unavailableGlowColor: {r: 1, g: 1, b: 1, a: 1}
   invalidColor: {r: 1, g: 0, b: 0, a: 1}

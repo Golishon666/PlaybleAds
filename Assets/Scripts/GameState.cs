@@ -11,7 +11,6 @@ namespace PlayableAdsShort
         public int HeroStrength { get; private set; }
         public bool ChestOpened { get; private set; }
         public bool IsBusy { get; set; }
-        public int CompletedActions { get; private set; }
 
         [Preserve]
         public GameState()
@@ -23,7 +22,6 @@ namespace PlayableAdsShort
             HeroStrength = heroStrength;
             ChestOpened = false;
             IsBusy = false;
-            CompletedActions = 0;
             _defeatedTargets.Clear();
         }
 
@@ -31,14 +29,12 @@ namespace PlayableAdsShort
         {
             ChestOpened = true;
             HeroStrength += reward;
-            CompletedActions++;
         }
 
         public void Defeat(string targetId, int reward)
         {
             _defeatedTargets.Add(targetId);
             HeroStrength += reward;
-            CompletedActions++;
         }
 
         public bool IsDefeated(string targetId)

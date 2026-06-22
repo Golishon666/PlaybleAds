@@ -62,18 +62,6 @@ namespace PlayableAdsShort
             return Object.Instantiate(_config.pathDotPrefab, _stage.hintLayer);
         }
 
-        public VfxBurstView CreateSlashVfx()
-        {
-            VfxBurstView prefab = _config.slashVfxPrefab != null ? _config.slashVfxPrefab : _config.vfxBurstPrefab;
-            return Object.Instantiate(prefab, _stage.effectsLayer);
-        }
-
-        public VfxBurstView CreateChestBurstVfx()
-        {
-            VfxBurstView prefab = _config.chestBurstPrefab != null ? _config.chestBurstPrefab : _config.vfxBurstPrefab;
-            return Object.Instantiate(prefab, _stage.effectsLayer);
-        }
-
         public VfxBurstView CreateChestRewardFlightVfx()
         {
             VfxBurstView prefab = _config.chestRewardFlightVfxPrefab != null ? _config.chestRewardFlightVfxPrefab : _config.vfxBurstPrefab;

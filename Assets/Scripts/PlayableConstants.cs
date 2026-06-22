@@ -61,6 +61,7 @@ namespace PlayableAdsShort
             public const float ChestRewardReleaseNormalizedTime = 0.8f;
             public const float ChestRewardFlightDuration = 0.78f;
             public const float ChestRewardArcHeight = 1.15f;
+            public const float SecondAttackImpactDelay = 1.12f;
             public const int PathDotCount = 5;
             public const int PathPreviewDelayMs = 260;
         }
