@@ -58,6 +58,7 @@ namespace PlayableAdsShort
             public const float InvalidShakeDuration = 0.28f;
             public const float CtaDelay = 0.45f;
             public const float ChestRewardSpawnDelay = 0.75f;
+            public const float ChestRewardReleaseNormalizedTime = 0.8f;
             public const float ChestRewardFlightDuration = 0.78f;
             public const float ChestRewardArcHeight = 1.15f;
             public const int PathDotCount = 5;
@@ -81,9 +82,12 @@ namespace PlayableAdsShort
         {
             public const string MovingBool = "Moving";
             public const string AttackTrigger = "Attack";
+            public const string SuperAttackTrigger = "SuperAttack";
+            public const string SuperAttackingBool = "SuperAttacking";
             public const string HitTrigger = "Hit";
             public const string InvalidTrigger = "Invalid";
             public const string PowerTrigger = "Power";
+            public const string ShopUpdateTrigger = "ShopUpdate";
             public const string DeathTrigger = "Death";
             public const string OpenTrigger = "Open";
             public const string OpenState = "Open";
@@ -93,9 +97,12 @@ namespace PlayableAdsShort
 
             public static readonly int MovingBoolHash = Animator.StringToHash(MovingBool);
             public static readonly int AttackTriggerHash = Animator.StringToHash(AttackTrigger);
+            public static readonly int SuperAttackTriggerHash = Animator.StringToHash(SuperAttackTrigger);
+            public static readonly int SuperAttackingBoolHash = Animator.StringToHash(SuperAttackingBool);
             public static readonly int HitTriggerHash = Animator.StringToHash(HitTrigger);
             public static readonly int InvalidTriggerHash = Animator.StringToHash(InvalidTrigger);
             public static readonly int PowerTriggerHash = Animator.StringToHash(PowerTrigger);
+            public static readonly int ShopUpdateTriggerHash = Animator.StringToHash(ShopUpdateTrigger);
             public static readonly int DeathTriggerHash = Animator.StringToHash(DeathTrigger);
             public static readonly int OpenTriggerHash = Animator.StringToHash(OpenTrigger);
             public static readonly int OpenStateHash = Animator.StringToHash(OpenState);

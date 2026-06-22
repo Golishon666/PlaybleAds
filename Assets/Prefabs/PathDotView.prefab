@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.025, y: 0.025, z: 0.025}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2388678749837391318}
@@ -50,6 +50,8 @@ MonoBehaviour:
   popDuration: 0.18
   visibleDuration: 0.35
   fadeDuration: 0.18
+  initialVisibleScale: 0.72
+  positionOffset: {x: 0, y: 0, z: -0.05}
   popEase: 27
   fadeEase: 5
 --- !u!1 &3818331749642107394
@@ -131,7 +133,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 170
+  m_SortingOrder: 220
   m_MaskInteraction: 0
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 1, g: 0.9527312, b: 0, a: 1}

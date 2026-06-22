@@ -23,14 +23,19 @@ MonoBehaviour:
   groundBurstPrefab: {fileID: 2592182256280145336, guid: 46183b9480c8ced408ce9feb19847769, type: 3}
   waterBurstPrefab: {fileID: 4161729216873010240, guid: 4489253564958584eb6e231a478d2c4c, type: 3}
   octopusDeathBurstPrefab: {fileID: 7001000000000000003, guid: 7960f796252b48929b528d82fca5669f, type: 3}
+  rewardSparkPrefab: {fileID: 9201000000000000001, guid: 58a94ee8d59a4a5f9d4ccfdc0f76f2d1, type: 3}
+  chestRewardFlightVfxPrefab: {fileID: 9301000000000000001, guid: 9f85b46bf5134e6bb85d7efa17a51543, type: 3}
   weaponProjectilePrefab: {fileID: 7101000000000000001, guid: 7927d8d5db5e4f7ba237be6ecc01985e, type: 3}
   ctaOverlayPrefab: {fileID: 5201014329209918098, guid: 691e52f40040bb74dbc280b7e25165ee, type: 3}
   clickClip: {fileID: 8300000, guid: 134e5232937132743a689c5e40184163, type: 3}
   chestClip: {fileID: 8300000, guid: be1bcf28d6991164f813d4ebfa33ad41, type: 3}
-  hitClip: {fileID: 8300000, guid: de1762146dda8a44e93c4d0f3413265e, type: 3}
+  hitClip: {fileID: 8300000, guid: 6369ce4ed68d05642972eccb821dfde8, type: 3}
   invalidClip: {fileID: 8300000, guid: 359dfcdd2a1475740ab8f457f6f52935, type: 3}
   powerClip: {fileID: 8300000, guid: d9992d2c0cd642f4abc8a6c61415cc73, type: 3}
+  waterHitClip: {fileID: 8300000, guid: 3dd1c30d7c322cd4fb41b5dcd4ca6fd9, type: 3}
   ctaClip: {fileID: 8300000, guid: 15e3746d2c78e4a498d0c8cc941b53ee, type: 3}
+  footstepClip: {fileID: 8300000, guid: bde838eb9d2f7824aa0ce31d03e4a297, type: 3}
+  footstepVolume: 0.42
   heroStartStrength: 2
   moveDuration: 0.68
   moveSpeed: 3.8
@@ -39,7 +44,8 @@ MonoBehaviour:
   pathDotDelay: 0.045
   invalidShakeDuration: 0.28
   ctaDelay: 0.45
-  chestImpactDelay: 1
+  chestImpactDelay: 0.45
+  chestRewardReleaseNormalizedTime: 0.8
   selectionPulseDuration: 0.34
   attackImpactDelay: 0.34
   attackRecoveryDuration: 0.56

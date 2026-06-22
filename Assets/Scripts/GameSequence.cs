@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace PlayableAdsShort
         private readonly IViewFactory _factory;
         private readonly List<GameObject> _hintObjects = new List<GameObject>();
         private readonly List<GameObject> _actionPathObjects = new List<GameObject>();
+        private readonly List<PathDotProgress> _actionPathDots = new List<PathDotProgress>();
 
         [Preserve]
         public GameSequence(GameConfig config, StageView stage, IViewFactory factory)
@@ -32,10 +34,12 @@ namespace PlayableAdsShort
             await PlayPathPreviewAsync(route, chest.HintPosition, chest.HintScale, token);
             try
             {
-                await AwaitTween(hero.MoveAlong(route, _config.moveSpeed), token);
+                _stage.PlayFootsteps(_config.footstepClip, _config.footstepVolume);
+                await AwaitMovementTween(hero.MoveAlong(route, _config.moveSpeed), hero, route, token);
             }
             finally
             {
+                _stage.StopFootsteps();
                 ClearActionPath();
             }
 
@@ -43,9 +47,11 @@ namespace PlayableAdsShort
             chest.Open();
             await WaitForChestOpenAsync(chest, token);
             PlayBurst(_factory.CreateChestBurstVfx(), chest.Position);
+            PlayBurst(_factory.CreateChestRewardFlightVfx(), chest.Position);
             await AwaitTween(chest.PlayRewardFlight(hero.RewardCatchPosition), token);
             state.OpenChest(chest.Reward);
             hero.EquipWeapon();
+            PlayBurst(_factory.CreateRewardSparkVfx(), hero.RewardCatchPosition);
             hero.SetStrength(state.HeroStrength);
             hero.SetPoweredVisual(true);
             _stage.Play(_config.powerClip, 0.85f);
@@ -59,18 +65,46 @@ namespace PlayableAdsShort
             _stage.Play(_config.clickClip, 0.7f);
             IReadOnlyList<Vector3> route = BuildRoute(hero.Position, target.AttackSpot);
             await PlayPathPreviewAsync(route, target.HintPosition, target.HintScale, token);
+            bool useEarlySuperAttack = IsSecondGoblinTarget(target);
+            bool superAttackPlayed = false;
+            Action earlySuperAttack = null;
+            if (useEarlySuperAttack)
+            {
+                earlySuperAttack = () =>
+                {
+                    superAttackPlayed = true;
+                    hero.PlaySuperAttack();
+                };
+            }
+
             try
             {
-                await AwaitTween(hero.MoveAlong(route, _config.moveSpeed), token);
+                _stage.PlayFootsteps(_config.footstepClip, _config.footstepVolume);
+                await AwaitMovementTween(
+                    hero.MoveAlong(route, _config.moveSpeed),
+                    hero,
+                    route,
+                    token,
+                    useEarlySuperAttack ? GetTwoPathDotsBeforeEndDistance(route) : -1f,
+                    earlySuperAttack);
             }
             finally
             {
+                _stage.StopFootsteps();
                 ClearActionPath();
             }
 
-            hero.PlayAttack();
+            if (!superAttackPlayed && IsSecondGoblinTarget(target))
+            {
+                hero.PlaySuperAttack();
+            }
+            else if (!superAttackPlayed)
+            {
+                hero.PlayAttack();
+            }
+
             hero.Face(target.Position);
-            _stage.Play(target.Kind == TargetKind.WaterEnemy ? _config.powerClip : _config.hitClip, 0.9f);
+            _stage.Play(target.Kind == TargetKind.WaterEnemy ? _config.powerClip : _config.hitClip, 0.63f);
 
             Tween weaponThrow = null;
             if (target.Kind == TargetKind.WaterEnemy)
@@ -85,9 +119,14 @@ namespace PlayableAdsShort
             }
 
             PlayBurst(_factory.CreateImpactVfx(target.Kind), target.ImpactPosition);
+            if (target.Kind == TargetKind.WaterEnemy)
+            {
+                _stage.Play(_config.waterHitClip, 0.51f);
+            }
 
             await AwaitTween(target.HitImpact(), token);
             target.SetDefeated();
+            hero.SetSuperAttacking(false);
             PlayBurst(_factory.CreateDeathVfx(target), target.ImpactPosition);
             state.Defeat(target.Id, target.Reward);
             hero.SetStrength(state.HeroStrength);
@@ -97,9 +136,13 @@ namespace PlayableAdsShort
             await UniTask.Delay((int)(_config.attackRecoveryDuration * 1000f), cancellationToken: token);
         }
 
-        public async UniTask PlayInvalidAsync(TargetView target, CancellationToken token)
+        public async UniTask PlayInvalidAsync(TargetView target, CancellationToken token, bool showMarker = true)
         {
-            PlaySelectionPulse(target.HintPosition, target.HintScale);
+            if (showMarker)
+            {
+                PlaySelectionPulse(target.HintPosition, target.HintScale);
+            }
+
             _stage.Play(_config.invalidClip, 0.65f);
             await AwaitTween(target.PulseInvalid(_config.invalidShakeDuration), token);
         }
@@ -163,9 +206,10 @@ namespace PlayableAdsShort
 
         private void CreatePath(IReadOnlyList<Vector3> route, bool persistent)
         {
+            float routeLength = GetRouteLength(route);
             for (int i = 1; i <= PlayableConstants.Motion.PathDotCount; i++)
             {
-                float t = i / (PlayableConstants.Motion.PathDotCount + 1f);
+                float t = i / (float)PlayableConstants.Motion.PathDotCount;
                 PathDotView dot = _factory.CreatePathDot();
                 dot.Show(SampleRoute(route, t));
                 dot.Pop(i * _config.pathDotDelay, keepVisible: true);
@@ -176,6 +220,7 @@ namespace PlayableAdsShort
                 else
                 {
                     _actionPathObjects.Add(dot.gameObject);
+                    _actionPathDots.Add(new PathDotProgress(dot, routeLength * t));
                 }
             }
         }
@@ -206,6 +251,7 @@ namespace PlayableAdsShort
             }
 
             _actionPathObjects.Clear();
+            _actionPathDots.Clear();
         }
 
         private IReadOnlyList<Vector3> BuildRoute(Vector3 from, Vector3 desiredDestination)
@@ -259,6 +305,67 @@ namespace PlayableAdsShort
             return route[route.Count - 1];
         }
 
+        private static float GetRouteLength(IReadOnlyList<Vector3> route)
+        {
+            float totalLength = 0f;
+            for (int i = 1; i < route.Count; i++)
+            {
+                totalLength += Vector3.Distance(route[i - 1], route[i]);
+            }
+
+            return totalLength;
+        }
+
+        private static float GetRouteProgressDistance(IReadOnlyList<Vector3> route, Vector3 position)
+        {
+            float bestDistance = 0f;
+            float bestSqrDistance = float.PositiveInfinity;
+            float travelled = 0f;
+
+            for (int i = 1; i < route.Count; i++)
+            {
+                Vector3 start = route[i - 1];
+                Vector3 end = route[i];
+                Vector3 segment = end - start;
+                float segmentLength = segment.magnitude;
+                if (segmentLength <= 0.0001f)
+                {
+                    continue;
+                }
+
+                float t = Mathf.Clamp01(Vector3.Dot(position - start, segment) / (segmentLength * segmentLength));
+                Vector3 projected = Vector3.Lerp(start, end, t);
+                float sqrDistance = (position - projected).sqrMagnitude;
+                if (sqrDistance < bestSqrDistance)
+                {
+                    bestSqrDistance = sqrDistance;
+                    bestDistance = travelled + segmentLength * t;
+                }
+
+                travelled += segmentLength;
+            }
+
+            return bestDistance;
+        }
+
+        private void HidePassedActionPathDots(float progressDistance)
+        {
+            for (int i = 0; i < _actionPathDots.Count; i++)
+            {
+                PathDotProgress dot = _actionPathDots[i];
+                if (dot.Hidden || progressDistance < dot.Distance)
+                {
+                    continue;
+                }
+
+                dot.Hidden = true;
+                if (dot.View != null)
+                {
+                    dot.View.Hide();
+                }
+            }
+        }
+
         private static void PlayBurst(VfxBurstView burst, Vector3 position)
         {
             if (burst == null)
@@ -268,6 +375,11 @@ namespace PlayableAdsShort
 
             burst.Show(position);
             burst.Play(PlayableConstants.Effects.BurstDuration);
+        }
+
+        private static bool IsSecondGoblinTarget(TargetView target)
+        {
+            return target != null && target.Id == PlayableConstants.Ids.LeftEnemy;
         }
 
         private async UniTask WaitForChestOpenAsync(ChestView chest, CancellationToken token)
@@ -281,7 +393,7 @@ namespace PlayableAdsShort
 
             await UniTask.Yield(PlayerLoopTiming.Update, token);
             await WaitUntilAnimatorStateAsync(animator, PlayableConstants.Animation.OpenStateHash, token);
-            await WaitUntilAnimatorStateCompleteAsync(animator, PlayableConstants.Animation.OpenStateHash, token);
+            await WaitUntilAnimatorStateTimeAsync(animator, PlayableConstants.Animation.OpenStateHash, _config.chestRewardReleaseNormalizedTime, token);
         }
 
         private static async UniTask WaitUntilAnimatorStateAsync(Animator animator, int stateHash, CancellationToken token)
@@ -302,8 +414,9 @@ namespace PlayableAdsShort
             }
         }
 
-        private static async UniTask WaitUntilAnimatorStateCompleteAsync(Animator animator, int stateHash, CancellationToken token)
+        private static async UniTask WaitUntilAnimatorStateTimeAsync(Animator animator, int stateHash, float normalizedTime, CancellationToken token)
         {
+            normalizedTime = Mathf.Clamp01(normalizedTime);
             float elapsed = 0f;
             while (elapsed < PlayableConstants.Animation.AnimatorWaitTimeout)
             {
@@ -311,7 +424,7 @@ namespace PlayableAdsShort
                 AnimatorStateInfo current = animator.GetCurrentAnimatorStateInfo(PlayableConstants.Animation.DefaultLayer);
                 if (current.shortNameHash == stateHash
                     && !animator.IsInTransition(PlayableConstants.Animation.DefaultLayer)
-                    && current.normalizedTime >= PlayableConstants.Animation.CompleteNormalizedTime)
+                    && current.normalizedTime >= normalizedTime)
                 {
                     return;
                 }
@@ -332,6 +445,62 @@ namespace PlayableAdsShort
             {
                 token.ThrowIfCancellationRequested();
                 await UniTask.Yield(PlayerLoopTiming.Update, token);
+            }
+        }
+
+        private async UniTask AwaitMovementTween(
+            Tween tween,
+            ActorView hero,
+            IReadOnlyList<Vector3> route,
+            CancellationToken token,
+            float triggerDistance = -1f,
+            Action triggerAction = null)
+        {
+            if (tween == null)
+            {
+                return;
+            }
+
+            bool triggered = false;
+            while (tween.IsActive() && tween.IsPlaying())
+            {
+                token.ThrowIfCancellationRequested();
+                float progressDistance = GetRouteProgressDistance(route, hero.Position);
+                HidePassedActionPathDots(progressDistance);
+                if (!triggered && triggerAction != null && progressDistance >= triggerDistance)
+                {
+                    triggered = true;
+                    triggerAction.Invoke();
+                }
+
+                await UniTask.Yield(PlayerLoopTiming.Update, token);
+            }
+
+            if (!triggered && triggerAction != null)
+            {
+                triggerAction.Invoke();
+            }
+
+            HidePassedActionPathDots(float.PositiveInfinity);
+        }
+
+        private static float GetTwoPathDotsBeforeEndDistance(IReadOnlyList<Vector3> route)
+        {
+            float routeLength = GetRouteLength(route);
+            float triggerDotIndex = Mathf.Max(0f, PlayableConstants.Motion.PathDotCount - 2f);
+            return routeLength * (triggerDotIndex / PlayableConstants.Motion.PathDotCount);
+        }
+
+        private sealed class PathDotProgress
+        {
+            public readonly PathDotView View;
+            public readonly float Distance;
+            public bool Hidden;
+
+            public PathDotProgress(PathDotView view, float distance)
+            {
+                View = view;
+                Distance = distance;
             }
         }
     }

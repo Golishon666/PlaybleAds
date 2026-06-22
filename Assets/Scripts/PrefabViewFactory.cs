@@ -74,6 +74,18 @@ namespace PlayableAdsShort
             return Object.Instantiate(prefab, _stage.effectsLayer);
         }
 
+        public VfxBurstView CreateChestRewardFlightVfx()
+        {
+            VfxBurstView prefab = _config.chestRewardFlightVfxPrefab != null ? _config.chestRewardFlightVfxPrefab : _config.vfxBurstPrefab;
+            return Object.Instantiate(prefab, _stage.effectsLayer);
+        }
+
+        public VfxBurstView CreateRewardSparkVfx()
+        {
+            VfxBurstView prefab = _config.rewardSparkPrefab != null ? _config.rewardSparkPrefab : _config.vfxBurstPrefab;
+            return Object.Instantiate(prefab, _stage.effectsLayer);
+        }
+
         public VfxBurstView CreateImpactVfx(TargetKind targetKind)
         {
             VfxBurstView prefab = targetKind == TargetKind.WaterEnemy ? _config.waterBurstPrefab : _config.groundBurstPrefab;

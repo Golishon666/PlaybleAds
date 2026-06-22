@@ -15,7 +15,7 @@ namespace PlayableAdsShort
     {
         UniTask PlayChestAsync(ActorView hero, ChestView chest, GameState state, CancellationToken token);
         UniTask PlayAttackAsync(ActorView hero, TargetView target, GameState state, CancellationToken token);
-        UniTask PlayInvalidAsync(TargetView target, CancellationToken token);
+        UniTask PlayInvalidAsync(TargetView target, CancellationToken token, bool showMarker = true);
         UniTask PlayInvalidAsync(ChestView chest, CancellationToken token);
         UniTask PlayCtaAsync(CancellationToken token);
         void ShowHint(ActorView hero, ChestView chest);
@@ -32,6 +32,8 @@ namespace PlayableAdsShort
         PathDotView CreatePathDot();
         VfxBurstView CreateSlashVfx();
         VfxBurstView CreateChestBurstVfx();
+        VfxBurstView CreateChestRewardFlightVfx();
+        VfxBurstView CreateRewardSparkVfx();
         VfxBurstView CreateImpactVfx(TargetKind targetKind);
         VfxBurstView CreateDeathVfx(TargetView target);
         CtaOverlayView CreateCtaOverlay();

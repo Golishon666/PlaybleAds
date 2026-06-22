@@ -135,6 +135,25 @@ namespace PlayableAdsShort
             SetTrigger(PlayableConstants.Animation.AttackTriggerHash);
         }
 
+        public void PlaySuperAttack()
+        {
+            SetSuperAttacking(true);
+            SetTrigger(PlayableConstants.Animation.SuperAttackTriggerHash);
+        }
+
+        public void SetSuperAttacking(bool active)
+        {
+            if (animator != null)
+            {
+                animator.SetBool(PlayableConstants.Animation.SuperAttackingBoolHash, active);
+            }
+        }
+
+        public void PlayShopUpdate()
+        {
+            SetTrigger(PlayableConstants.Animation.ShopUpdateTriggerHash);
+        }
+
         public Tween ThrowWeaponAt(Vector3 targetPosition, GameObject projectilePrefab, Transform projectileParent)
         {
             if (weaponRoot == null || !_weaponEquipped)

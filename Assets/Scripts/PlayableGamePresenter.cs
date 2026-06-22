@@ -113,19 +113,25 @@ namespace PlayableAdsShort
                 }
                 else if (_targetViews.TryGetValue(targetId, out TargetView targetView))
                 {
+                    bool hasEnoughStrength = _state.HeroStrength >= targetView.Strength;
                     if (_state.ChestOpened &&
                         !_state.IsDefeated(targetId) &&
-                        _state.HeroStrength >= targetView.Strength)
+                        hasEnoughStrength)
                     {
                         await _sequence.PlayAttackAsync(_hero, targetView, _state, token);
                     }
                     else
                     {
-                        await _sequence.PlayInvalidAsync(targetView, token);
+                        await _sequence.PlayInvalidAsync(targetView, token, showMarker: hasEnoughStrength);
                     }
                 }
 
                 UpdateAvailability();
+
+                if (AreAllTargetsDefeated())
+                {
+                    _hero.PlayShopUpdate();
+                }
 
                 if (!_ctaShown && ShouldShowCta())
                 {
@@ -154,7 +160,12 @@ namespace PlayableAdsShort
         private bool ShouldShowCta()
         {
             return _targetViews.Values.Any(target => target.EndsGame && _state.IsDefeated(target.Id)) ||
-                   _targetViews.Keys.All(id => _state.IsDefeated(id));
+                   AreAllTargetsDefeated();
+        }
+
+        private bool AreAllTargetsDefeated()
+        {
+            return _targetViews.Count > 0 && _targetViews.Keys.All(id => _state.IsDefeated(id));
         }
 
         private async UniTaskVoid RunHintLoopAsync(CancellationToken token)
