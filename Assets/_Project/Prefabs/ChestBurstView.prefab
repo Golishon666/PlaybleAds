@@ -1,0 +1,184 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1667766228771857447
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4770528370481424}
+  - component: {fileID: 1132451869704453364}
+  - component: {fileID: 4428366324903434322}
+  m_Layer: 0
+  m_Name: Visual
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4770528370481424
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667766228771857447}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1932909462689700517}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &1132451869704453364
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667766228771857447}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 4568092b96bd38a46a6dc80dc8fe61de, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 200
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 21300000, guid: 2bd9248f9b27ae845ab2968f8b3dcba8, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 10, y: 10}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+--- !u!114 &4428366324903434322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667766228771857447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7aa4519b97de9c46a9aad0e72187fb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayableAdsShort.SpriteSequenceAnimator
+  spriteRenderer: {fileID: 1132451869704453364}
+  frames:
+  - {fileID: 21300000, guid: 2bd9248f9b27ae845ab2968f8b3dcba8, type: 3}
+  - {fileID: 21300000, guid: f8dbc01a35394bf4bb6ca6fb2476d0d7, type: 3}
+  - {fileID: 21300000, guid: 786e036cf307af84bb34267cb0a369b4, type: 3}
+  - {fileID: 21300000, guid: 600b60205a191bd4e9a1a44ff2d8af84, type: 3}
+  - {fileID: 21300000, guid: 7121f1cfe67b8b34394e5dda64654561, type: 3}
+  - {fileID: 21300000, guid: 2934d159bfb39bf4498fe08c5284df26, type: 3}
+  - {fileID: 21300000, guid: 83341820dab13664799f542f95c41576, type: 3}
+  - {fileID: 21300000, guid: 052c819373496f74e9c200bcc5147391, type: 3}
+  - {fileID: 21300000, guid: f599a7bad8072d441aedbe1fccabf48d, type: 3}
+  - {fileID: 21300000, guid: 346bde162646b6247a203ca785b36419, type: 3}
+  - {fileID: 21300000, guid: 52e38f74443f35645a2560c758a9e889, type: 3}
+  - {fileID: 21300000, guid: 6c1e87858b679b94a9297b390f26c83c, type: 3}
+  - {fileID: 21300000, guid: 6eb79ef74c067eb43afcf414619b02b5, type: 3}
+  - {fileID: 21300000, guid: 0a2b61a1563c2a14d9b8982ab40adb2d, type: 3}
+  - {fileID: 21300000, guid: 52d961ecb2c4a214cbab920be311217d, type: 3}
+  - {fileID: 21300000, guid: 64b62dc675fe2a1489330711b258ac05, type: 3}
+  - {fileID: 21300000, guid: e6f52f43d1199104987693f8f8235372, type: 3}
+  - {fileID: 21300000, guid: ebcf8e3422f1c04448ca9b3f28b6f98b, type: 3}
+  framesPerSecond: 24
+  playOnEnable: 0
+  loop: 0
+  randomStartFrame: 0
+--- !u!1 &5800317308141534665
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1932909462689700517}
+  - component: {fileID: 1260695732241329861}
+  m_Layer: 0
+  m_Name: ChestBurstView
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1932909462689700517
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5800317308141534665}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.18, y: 0.18, z: 0.18}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4770528370481424}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1260695732241329861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5800317308141534665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7fd2123502be9b4d8af0aa420dcb86b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayableAdsShort.VfxBurstView
+  visualRoot: {fileID: 4770528370481424}
+  spriteRenderer: {fileID: 1132451869704453364}
+  sequenceAnimator: {fileID: 4428366324903434322}
+  scalePeak: 1.08
+  scaleInPart: 0.2
+  holdPart: 0.8
+  scaleInEase: 27
+  scaleOutEase: 3
+  fadeEase: 5
