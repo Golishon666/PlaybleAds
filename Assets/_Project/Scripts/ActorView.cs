@@ -23,12 +23,20 @@ namespace PlayableAdsShort
         public float punchDuration = 0.22f;
         public int punchVibrato = 5;
         public float punchElasticity = 0.65f;
+        public Vector3 rewardCatchOffset = new Vector3(0f, 0.85f, -0.2f);
+        public float weaponThrowOutDuration = 0.24f;
+        public float weaponThrowReturnDuration = 0.28f;
+        public float weaponThrowHoldDuration = 0.06f;
+        public float weaponThrowSpinDegrees = 540f;
+        public Ease weaponThrowOutEase = Ease.OutQuad;
+        public Ease weaponThrowReturnEase = Ease.InOutSine;
 
         private Vector3 _visualBaseScale;
         private Vector3 _weaponBaseScale;
         private bool _weaponEquipped;
 
         public Vector3 Position => motionRoot.position;
+        public Vector3 RewardCatchPosition => weaponRoot != null ? weaponRoot.position : motionRoot.position + rewardCatchOffset;
 
         private void Awake()
         {
@@ -108,6 +116,44 @@ namespace PlayableAdsShort
         public void PlayAttack()
         {
             SetTrigger(PlayableConstants.Animation.AttackTriggerHash);
+        }
+
+        public Tween ThrowWeaponAt(Vector3 targetPosition)
+        {
+            if (weaponRoot == null || !_weaponEquipped)
+            {
+                return null;
+            }
+
+            Transform originalParent = weaponRoot.parent;
+            Vector3 originalLocalPosition = weaponRoot.localPosition;
+            Quaternion originalLocalRotation = weaponRoot.localRotation;
+            Vector3 originalLocalScale = weaponRoot.localScale;
+            Vector3 returnPosition = originalParent != null
+                ? originalParent.TransformPoint(originalLocalPosition)
+                : weaponRoot.position;
+
+            Sequence sequence = DOTween.Sequence().SetLink(gameObject);
+            weaponRoot.SetParent(null, true);
+            sequence.Append(weaponRoot.DOMove(targetPosition, weaponThrowOutDuration).SetEase(weaponThrowOutEase));
+            sequence.Join(weaponRoot.DORotate(Vector3.forward * weaponThrowSpinDegrees, weaponThrowOutDuration, RotateMode.WorldAxisAdd));
+            sequence.AppendInterval(weaponThrowHoldDuration);
+            sequence.AppendCallback(() =>
+            {
+                returnPosition = originalParent != null
+                    ? originalParent.TransformPoint(originalLocalPosition)
+                    : returnPosition;
+            });
+            sequence.Append(weaponRoot.DOMove(returnPosition, weaponThrowReturnDuration).SetEase(weaponThrowReturnEase));
+            sequence.Join(weaponRoot.DORotate(Vector3.forward * weaponThrowSpinDegrees, weaponThrowReturnDuration, RotateMode.WorldAxisAdd));
+            sequence.OnComplete(() =>
+            {
+                weaponRoot.SetParent(originalParent, true);
+                weaponRoot.localPosition = originalLocalPosition;
+                weaponRoot.localRotation = originalLocalRotation;
+                weaponRoot.localScale = originalLocalScale;
+            });
+            return sequence;
         }
 
         public void EquipWeapon()

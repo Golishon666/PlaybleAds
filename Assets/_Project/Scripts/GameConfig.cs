@@ -23,6 +23,7 @@ namespace PlayableAdsShort
         public VfxBurstView chestBurstPrefab;
         public VfxBurstView groundBurstPrefab;
         public VfxBurstView waterBurstPrefab;
+        public VfxBurstView octopusDeathBurstPrefab;
         public CtaOverlayView ctaOverlayPrefab;
 
         [Header("Audio")]
@@ -44,7 +45,8 @@ namespace PlayableAdsShort
         public float pathDotDelay = PlayableConstants.Motion.PathDotDelay;
         public float invalidShakeDuration = PlayableConstants.Motion.InvalidShakeDuration;
         public float ctaDelay = PlayableConstants.Motion.CtaDelay;
-        public float chestImpactDelay = 0.42f;
+        public float chestImpactDelay = PlayableConstants.Motion.ChestRewardSpawnDelay;
+        public float selectionPulseDuration = PlayableConstants.Motion.SelectionPulseDuration;
         public float attackImpactDelay = 0.34f;
         public float attackRecoveryDuration = 0.58f;
         public float defeatedHoldDuration = 0.55f;

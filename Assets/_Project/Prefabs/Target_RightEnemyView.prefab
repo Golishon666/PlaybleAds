@@ -401,6 +401,7 @@ MonoBehaviour:
   visualRoot: {fileID: 1898860693898552863}
   attackAnchor: {fileID: 1517886845575697727}
   hintAnchor: {fileID: 3868902557507686148}
+  impactAnchor: {fileID: 0}
   hitCollider: {fileID: 7715376549809288222}
   animator: {fileID: 6276574051496260722}
   sequenceAnimator: {fileID: 0}
@@ -414,6 +415,7 @@ MonoBehaviour:
   endsGame: 0
   hintOrder: 0
   hintScale: {x: 0.9, y: 0.9, z: 0.9}
+  impactOffset: {x: 0, y: 0.65, z: -0.05}
   slashRotation: 0
   availableGlowColor: {r: 1, g: 1, b: 1, a: 1}
   unavailableGlowColor: {r: 1, g: 1, b: 1, a: 1}

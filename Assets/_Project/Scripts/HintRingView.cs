@@ -13,19 +13,39 @@ namespace PlayableAdsShort
 
         public void Show(Vector3 position, Vector3 scale)
         {
+            transform.DOKill();
+            visualRoot.DOKill();
             transform.position = position;
             visualRoot.localScale = scale;
+            SetAlpha(1f);
         }
 
-        public Tween Pulse(float duration)
+        public Tween Pulse(float duration, bool destroyOnComplete = false)
         {
-            Sequence sequence = DOTween.Sequence().SetLoops(-1).SetLink(gameObject);
+            Sequence sequence = DOTween.Sequence().SetLink(gameObject);
             Vector3 baseScale = visualRoot.localScale;
             sequence.Append(visualRoot.DOScale(baseScale * pulseScale, duration).SetEase(pulseEase));
             sequence.Join(spriteRenderer.DOFade(pulseMinAlpha, duration).SetEase(pulseEase));
             sequence.Append(visualRoot.DOScale(baseScale, duration).SetEase(pulseEase));
             sequence.Join(spriteRenderer.DOFade(1f, duration).SetEase(pulseEase));
+            if (destroyOnComplete)
+            {
+                sequence.OnComplete(() => Destroy(gameObject));
+            }
+
             return sequence;
+        }
+
+        private void SetAlpha(float alpha)
+        {
+            if (spriteRenderer == null)
+            {
+                return;
+            }
+
+            Color color = spriteRenderer.color;
+            color.a = alpha;
+            spriteRenderer.color = color;
         }
     }
 }

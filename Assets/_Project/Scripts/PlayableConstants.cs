@@ -53,11 +53,23 @@ namespace PlayableAdsShort
             public const float MoveDuration = 0.68f;
             public const float AttackDuration = 0.4f;
             public const float HintPulseDuration = 0.62f;
+            public const float SelectionPulseDuration = 0.34f;
             public const float PathDotDelay = 0.045f;
             public const float InvalidShakeDuration = 0.28f;
             public const float CtaDelay = 0.45f;
+            public const float ChestRewardSpawnDelay = 0.75f;
+            public const float ChestRewardFlightDuration = 0.78f;
+            public const float ChestRewardArcHeight = 1.15f;
             public const int PathDotCount = 5;
             public const int PathPreviewDelayMs = 260;
+        }
+
+        public static class Sway
+        {
+            public const float CycleDuration = 2.25f;
+            public const float PositionAmplitudeX = 0.025f;
+            public const float PositionAmplitudeY = 0.04f;
+            public const float RotationAmplitude = 1.8f;
         }
 
         public static class Effects

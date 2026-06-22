@@ -22,8 +22,9 @@ MonoBehaviour:
   chestBurstPrefab: {fileID: 1260695732241329861, guid: 776f268cd69ea7649ade3c16d874ffd0, type: 3}
   groundBurstPrefab: {fileID: 2592182256280145336, guid: 46183b9480c8ced408ce9feb19847769, type: 3}
   waterBurstPrefab: {fileID: 4161729216873010240, guid: 4489253564958584eb6e231a478d2c4c, type: 3}
+  octopusDeathBurstPrefab: {fileID: 7001000000000000003, guid: 7960f796252b48929b528d82fca5669f, type: 3}
   ctaOverlayPrefab: {fileID: 5201014329209918098, guid: 691e52f40040bb74dbc280b7e25165ee, type: 3}
-  clickClip: {fileID: 8300000, guid: 16cff3d2385759b46bc64b0d344c1c6e, type: 3}
+  clickClip: {fileID: 8300000, guid: 134e5232937132743a689c5e40184163, type: 3}
   chestClip: {fileID: 8300000, guid: be1bcf28d6991164f813d4ebfa33ad41, type: 3}
   hitClip: {fileID: 8300000, guid: de1762146dda8a44e93c4d0f3413265e, type: 3}
   invalidClip: {fileID: 8300000, guid: 359dfcdd2a1475740ab8f457f6f52935, type: 3}
@@ -37,7 +38,8 @@ MonoBehaviour:
   pathDotDelay: 0.045
   invalidShakeDuration: 0.28
   ctaDelay: 0.45
-  chestImpactDelay: 0.45
+  chestImpactDelay: 1
+  selectionPulseDuration: 0.34
   attackImpactDelay: 0.34
   attackRecoveryDuration: 0.56
   defeatedHoldDuration: 0.55

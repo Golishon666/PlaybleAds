@@ -8,6 +8,7 @@ namespace PlayableAdsShort
         public Transform visualRoot;
         public Transform attackAnchor;
         public Transform hintAnchor;
+        public Transform impactAnchor;
         public Collider hitCollider;
         public Animator animator;
         public SpriteSequenceAnimator sequenceAnimator;
@@ -21,6 +22,7 @@ namespace PlayableAdsShort
         public bool endsGame;
         public int hintOrder;
         public Vector3 hintScale = Vector3.one;
+        public Vector3 impactOffset = new Vector3(0f, 0.65f, -0.05f);
         public float slashRotation;
         public Color availableGlowColor = Color.white;
         public Color unavailableGlowColor = Color.white;
@@ -48,6 +50,7 @@ namespace PlayableAdsShort
         public Vector3 HintPosition => hintAnchor != null ? hintAnchor.position : transform.position;
         public Vector3 HintScale => hintScale;
         public Vector3 AttackSpot => attackAnchor != null ? attackAnchor.position : transform.position;
+        public Vector3 ImpactPosition => impactAnchor != null ? impactAnchor.position : transform.position + impactOffset;
         public float SlashRotation => slashRotation;
 
         private void Awake()

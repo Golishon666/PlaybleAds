@@ -33,6 +33,7 @@ namespace PlayableAdsShort
         VfxBurstView CreateSlashVfx();
         VfxBurstView CreateChestBurstVfx();
         VfxBurstView CreateImpactVfx(TargetKind targetKind);
+        VfxBurstView CreateDeathVfx(TargetView target);
         CtaOverlayView CreateCtaOverlay();
     }
 }

@@ -14,6 +14,7 @@ namespace PlayableAdsShort
         private readonly StageView _stage;
         private readonly IViewFactory _factory;
         private readonly List<GameObject> _hintObjects = new List<GameObject>();
+        private readonly List<GameObject> _actionPathObjects = new List<GameObject>();
 
         [Preserve]
         public GameSequence(GameConfig config, StageView stage, IViewFactory factory)
@@ -28,18 +29,28 @@ namespace PlayableAdsShort
             ClearHint();
             _stage.Play(_config.clickClip, 0.75f);
             IReadOnlyList<Vector3> route = BuildRoute(hero.Position, chest.ApproachSpot);
-            await PlayPathAsync(route, token);
-            await AwaitTween(hero.MoveAlong(route, _config.moveSpeed), token);
+            await PlayPathPreviewAsync(route, chest.HintPosition, chest.HintScale, token);
+            try
+            {
+                await AwaitTween(hero.MoveAlong(route, _config.moveSpeed), token);
+            }
+            finally
+            {
+                ClearActionPath();
+            }
+
             _stage.Play(_config.chestClip, 0.95f);
             chest.Open();
             await UniTask.Delay((int)(_config.chestImpactDelay * 1000f), cancellationToken: token);
             PlayBurst(_factory.CreateChestBurstVfx(), chest.Position);
+            await AwaitTween(chest.PlayRewardFlight(hero.RewardCatchPosition), token);
             state.OpenChest(chest.Reward);
             hero.EquipWeapon();
             hero.SetStrength(state.HeroStrength);
             hero.SetPoweredVisual(true);
             _stage.Play(_config.powerClip, 0.85f);
             await AwaitTween(hero.Punch(), token);
+            await AwaitTween(chest.HideAfterUpgrade(), token);
         }
 
         public async UniTask PlayAttackAsync(ActorView hero, TargetView target, GameState state, CancellationToken token)
@@ -47,37 +58,55 @@ namespace PlayableAdsShort
             ClearHint();
             _stage.Play(_config.clickClip, 0.7f);
             IReadOnlyList<Vector3> route = BuildRoute(hero.Position, target.AttackSpot);
-            await PlayPathAsync(route, token);
-            await AwaitTween(hero.MoveAlong(route, _config.moveSpeed), token);
+            await PlayPathPreviewAsync(route, target.HintPosition, target.HintScale, token);
+            try
+            {
+                await AwaitTween(hero.MoveAlong(route, _config.moveSpeed), token);
+            }
+            finally
+            {
+                ClearActionPath();
+            }
 
-            VfxBurstView slash = _factory.CreateSlashVfx();
             hero.PlayAttack();
             hero.Face(target.Position);
-            slash.Show(Vector3.Lerp(hero.Position, target.Position, 0.58f));
             _stage.Play(target.Kind == TargetKind.WaterEnemy ? _config.powerClip : _config.hitClip, 0.9f);
-            slash.transform.rotation = Quaternion.Euler(0f, 0f, target.SlashRotation);
-            slash.Play(_config.attackDuration);
 
-            await UniTask.Delay((int)(_config.attackImpactDelay * 1000f), cancellationToken: token);
-            PlayBurst(_factory.CreateImpactVfx(target.Kind), target.Position);
+            Tween weaponThrow = null;
+            if (target.Kind == TargetKind.WaterEnemy)
+            {
+                await UniTask.Delay((int)(_config.attackImpactDelay * 1000f), cancellationToken: token);
+                weaponThrow = hero.ThrowWeaponAt(target.ImpactPosition);
+                await UniTask.Delay((int)(hero.weaponThrowOutDuration * 1000f), cancellationToken: token);
+            }
+            else
+            {
+                await UniTask.Delay((int)(_config.attackImpactDelay * 1000f), cancellationToken: token);
+            }
+
+            PlayBurst(_factory.CreateImpactVfx(target.Kind), target.ImpactPosition);
 
             await AwaitTween(target.HitImpact(), token);
             target.SetDefeated();
+            PlayBurst(_factory.CreateDeathVfx(target), target.ImpactPosition);
             state.Defeat(target.Id, target.Reward);
             hero.SetStrength(state.HeroStrength);
             hero.SetPoweredVisual(state.HeroStrength >= 13);
+            await AwaitTween(weaponThrow, token);
             await AwaitTween(hero.Punch(), token);
             await UniTask.Delay((int)(_config.attackRecoveryDuration * 1000f), cancellationToken: token);
         }
 
         public async UniTask PlayInvalidAsync(TargetView target, CancellationToken token)
         {
+            PlaySelectionPulse(target.HintPosition, target.HintScale);
             _stage.Play(_config.invalidClip, 0.65f);
             await AwaitTween(target.PulseInvalid(_config.invalidShakeDuration), token);
         }
 
         public async UniTask PlayInvalidAsync(ChestView chest, CancellationToken token)
         {
+            PlaySelectionPulse(chest.HintPosition, chest.HintScale);
             _stage.Play(_config.invalidClip, 0.65f);
             await AwaitTween(chest.PulseInvalid(_config.invalidShakeDuration), token);
         }
@@ -112,6 +141,7 @@ namespace PlayableAdsShort
             }
 
             _hintObjects.Clear();
+            ClearActionPath();
         }
 
         private void ShowHint(IReadOnlyList<Vector3> route, Vector3 ringPosition, Vector3 scale)
@@ -119,13 +149,14 @@ namespace PlayableAdsShort
             ClearHint();
             HintRingView ring = _factory.CreateHintRing();
             ring.Show(ringPosition, scale);
-            ring.Pulse(_config.hintPulseDuration);
             _hintObjects.Add(ring.gameObject);
             CreatePath(route, persistent: true);
         }
 
-        private async UniTask PlayPathAsync(IReadOnlyList<Vector3> route, CancellationToken token)
+        private async UniTask PlayPathPreviewAsync(IReadOnlyList<Vector3> route, Vector3 markerPosition, Vector3 markerScale, CancellationToken token)
         {
+            ClearActionPath();
+            ShowSelectionMarkerUntilArrival(markerPosition, markerScale);
             CreatePath(route, persistent: false);
             await UniTask.Delay(PlayableConstants.Motion.PathPreviewDelayMs, cancellationToken: token);
         }
@@ -137,12 +168,44 @@ namespace PlayableAdsShort
                 float t = i / (PlayableConstants.Motion.PathDotCount + 1f);
                 PathDotView dot = _factory.CreatePathDot();
                 dot.Show(SampleRoute(route, t));
-                dot.Pop(i * _config.pathDotDelay);
+                dot.Pop(i * _config.pathDotDelay, keepVisible: true);
                 if (persistent)
                 {
                     _hintObjects.Add(dot.gameObject);
                 }
+                else
+                {
+                    _actionPathObjects.Add(dot.gameObject);
+                }
             }
+        }
+
+        private void PlaySelectionPulse(Vector3 position, Vector3 scale)
+        {
+            HintRingView ring = _factory.CreateHintRing();
+            ring.Show(position, scale);
+            ring.Pulse(_config.selectionPulseDuration, destroyOnComplete: true);
+        }
+
+        private void ShowSelectionMarkerUntilArrival(Vector3 position, Vector3 scale)
+        {
+            HintRingView ring = _factory.CreateHintRing();
+            ring.Show(position, scale);
+            ring.Pulse(_config.selectionPulseDuration, destroyOnComplete: false);
+            _actionPathObjects.Add(ring.gameObject);
+        }
+
+        private void ClearActionPath()
+        {
+            foreach (GameObject pathObject in _actionPathObjects)
+            {
+                if (pathObject != null)
+                {
+                    Object.Destroy(pathObject);
+                }
+            }
+
+            _actionPathObjects.Clear();
         }
 
         private IReadOnlyList<Vector3> BuildRoute(Vector3 from, Vector3 desiredDestination)
@@ -198,6 +261,11 @@ namespace PlayableAdsShort
 
         private static void PlayBurst(VfxBurstView burst, Vector3 position)
         {
+            if (burst == null)
+            {
+                return;
+            }
+
             burst.Show(position);
             burst.Play(PlayableConstants.Effects.BurstDuration);
         }

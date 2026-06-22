@@ -42,7 +42,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 21d03619b9935464498af3de86c84696, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayableAdsShort.NavigationNode
   neighbours:
   - {fileID: 6099123726252384527}
@@ -88,7 +88,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 21d03619b9935464498af3de86c84696, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayableAdsShort.NavigationNode
   neighbours:
   - {fileID: 5041768266208650365}
@@ -712,6 +712,7 @@ GameObject:
   - component: {fileID: 7598555404701810237}
   - component: {fileID: 5328129686532555913}
   - component: {fileID: 5805728273674275149}
+  - component: {fileID: 3505121449764205551}
   m_Layer: 0
   m_Name: GameRoot
   m_TagString: Untagged
@@ -904,6 +905,27 @@ MonoBehaviour:
   autoInjectGameObjects: []
   config: {fileID: 11400000, guid: 34fb8b04eefc4f64b99b61eaba6a4e1d, type: 2}
   stageView: {fileID: 2362184654664886358}
+--- !u!114 &3505121449764205551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7012368036255044606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac5d1f4ef1cf4db48b6c63e2fed1d951, type: 3}
+  m_Name: WorldSwayView
+  m_EditorClassIdentifier: Assembly-CSharp::PlayableAdsShort.WorldSwayView
+  targetNames:
+  - boat
+  - ship
+  positionAmplitude: {x: 0.025, y: 0.04}
+  rotationAmplitude: 1.8
+  cycleDuration: 2.25
+  phaseStep: 0.35
+  swayEase: 4
+  includeInactive: 0
 --- !u!1 &7543175291247918733
 GameObject:
   m_ObjectHideFlags: 0

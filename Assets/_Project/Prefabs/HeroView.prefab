@@ -259,6 +259,7 @@ MonoBehaviour:
   punchDuration: 0.22
   punchVibrato: 5
   punchElasticity: 0.65
+  rewardCatchOffset: {x: 0, y: 0.85, z: -0.2}
 --- !u!1 &3153212019997195213
 GameObject:
   m_ObjectHideFlags: 0

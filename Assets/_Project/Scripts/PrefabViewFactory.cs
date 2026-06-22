@@ -80,6 +80,16 @@ namespace PlayableAdsShort
             return Object.Instantiate(prefab != null ? prefab : _config.vfxBurstPrefab, _stage.effectsLayer);
         }
 
+        public VfxBurstView CreateDeathVfx(TargetView target)
+        {
+            if (target == null || target.Id != PlayableConstants.Ids.Octopus || _config.octopusDeathBurstPrefab == null)
+            {
+                return null;
+            }
+
+            return Object.Instantiate(_config.octopusDeathBurstPrefab, _stage.effectsLayer);
+        }
+
         public CtaOverlayView CreateCtaOverlay()
         {
             CtaOverlayView view = Object.Instantiate(_config.ctaOverlayPrefab, _stage.overlayLayer);

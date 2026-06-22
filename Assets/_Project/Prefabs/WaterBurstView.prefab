@@ -82,7 +82,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 200
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 80e921adaa0321444a2787da96a84579, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1617cfd7d49fd04488287495c4b46aa4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -106,14 +106,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayableAdsShort.SpriteSequenceAnimator
   spriteRenderer: {fileID: 2453315721029397294}
   frames:
-  - {fileID: 21300000, guid: 80e921adaa0321444a2787da96a84579, type: 3}
-  - {fileID: 21300000, guid: 5b9f14aa3214864469150790441284ba, type: 3}
-  - {fileID: 21300000, guid: fd8694200520c0446a28e7a8a38157ce, type: 3}
-  - {fileID: 21300000, guid: 2f0dc94dcd993ec4492fc0176097f614, type: 3}
-  - {fileID: 21300000, guid: fc262d65080d5c04a9f4d53dbb64088f, type: 3}
-  - {fileID: 21300000, guid: 901626c77644ab8449f079fbe9005968, type: 3}
-  - {fileID: 21300000, guid: 9a55d1ea79ed7764492ed4ba030572ff, type: 3}
-  - {fileID: 21300000, guid: 593a9587fbdae68429d1c4ffa3282d3d, type: 3}
+  - {fileID: 21300000, guid: 1617cfd7d49fd04488287495c4b46aa4, type: 3}
+  - {fileID: 21300000, guid: d6f5b33eca68e56469bc9e3d2abb3055, type: 3}
+  - {fileID: 21300000, guid: 16de68ee1c523ad4b83811df61f48a5c, type: 3}
+  - {fileID: 21300000, guid: 7a9aab921602252418e35267463f3ed0, type: 3}
+  - {fileID: 21300000, guid: c83490fc6544db2469c800b0ce77bef7, type: 3}
+  - {fileID: 21300000, guid: f24128b4f4f06a94ead3193b4228a710, type: 3}
+  - {fileID: 21300000, guid: 8c6152bb3cd15104d89b0da6d2c2ac2b, type: 3}
+  - {fileID: 21300000, guid: a609dc197f8f3974baee054b22cb5d55, type: 3}
+  - {fileID: 21300000, guid: fc7323e7cb647f4489e7e6c88efcb207, type: 3}
+  - {fileID: 21300000, guid: 5839b3aa5389180499f980c537b6701b, type: 3}
   framesPerSecond: 24
   playOnEnable: 0
   loop: 0
